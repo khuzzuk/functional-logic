@@ -6,7 +6,7 @@
 
     <groupId>pl.khuzzuk</groupId>
     <artifactId>functional-logic</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <name>Functional Logic</name>
     <description>Providex some logical tools for lowering cyclomatic complexity</description>
     <url>https://github.com/khuzzuk/functional-logic</url>
