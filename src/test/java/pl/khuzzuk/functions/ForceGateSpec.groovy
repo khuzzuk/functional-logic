@@ -4,10 +4,10 @@ import spock.lang.Specification
 
 import java.util.concurrent.atomic.AtomicInteger
 
-class MultiGateSpec extends Specification {
+class ForceGateSpec extends Specification {
     def "check initialization validation exception"() {
         when:
-        MultiGate.of(invalidNumber, action1, action2)
+        ForceGate.of(invalidNumber, action1, action2)
 
         then:
         thrown IllegalArgumentException
@@ -22,11 +22,11 @@ class MultiGateSpec extends Specification {
     def "set on with double gate"() {
         given:
         AtomicInteger atomicInteger = new AtomicInteger(0)
-        MultiGate multiGate = MultiGate.of(2, {atomicInteger.set(1)}, {atomicInteger.set(0)})
+        ForceGate multiGate = ForceGate.of(2, {atomicInteger.set(1)}, {atomicInteger.set(0)}, true)
 
         when:
-        multiGate.on(0)
-        multiGate.on(1)
+        multiGate.on()
+        multiGate.on()
 
         then:
         atomicInteger.get() == 1
@@ -35,12 +35,12 @@ class MultiGateSpec extends Specification {
     def "set on with triple gate"() {
         given:
         AtomicInteger atomicInteger = new AtomicInteger(0)
-        MultiGate multiGate = MultiGate.of(3, {atomicInteger.set(1)}, {atomicInteger.set(0)})
+        ForceGate multiGate = ForceGate.of(3, {atomicInteger.set(1)}, {atomicInteger.set(0)}, true)
 
         when:
-        multiGate.on(0)
-        multiGate.on(1)
-        multiGate.on(2)
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
 
         then:
         atomicInteger.get() == 1
@@ -49,19 +49,19 @@ class MultiGateSpec extends Specification {
     def "set on with big multi gate"() {
         given:
         AtomicInteger atomicInteger = new AtomicInteger(0)
-        MultiGate multiGate = MultiGate.of(10, {atomicInteger.set(1)}, {atomicInteger.set(0)})
+        ForceGate multiGate = ForceGate.of(10, {atomicInteger.set(1)}, {atomicInteger.set(0)}, true)
 
         when:
-        multiGate.on(0)
-        multiGate.on(1)
-        multiGate.on(2)
-        multiGate.on(3)
-        multiGate.on(4)
-        multiGate.on(5)
-        multiGate.on(6)
-        multiGate.on(7)
-        multiGate.on(8)
-        multiGate.on(9)
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
 
         then:
         atomicInteger.get() == 1
@@ -70,13 +70,13 @@ class MultiGateSpec extends Specification {
     def "set on and off with triple gate"() {
         given:
         AtomicInteger atomicInteger = new AtomicInteger(0)
-        MultiGate multiGate = MultiGate.of(3, {atomicInteger.set(1)}, {atomicInteger.set(0)})
+        ForceGate multiGate = ForceGate.of(3, {atomicInteger.set(1)}, {atomicInteger.set(0)}, true)
 
         when:
-        multiGate.on(0)
-        multiGate.on(1)
-        multiGate.on(2)
-        multiGate.off(1)
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.off()
 
         then:
         atomicInteger.get() == 0
@@ -85,20 +85,20 @@ class MultiGateSpec extends Specification {
     def "set on and off with big multi gate"() {
         given:
         AtomicInteger atomicInteger = new AtomicInteger(0)
-        MultiGate multiGate = MultiGate.of(10, {atomicInteger.set(1)}, {atomicInteger.set(0)})
+        ForceGate multiGate = ForceGate.of(10, {atomicInteger.set(1)}, {atomicInteger.set(0)}, true)
 
         when:
-        multiGate.on(0)
-        multiGate.on(1)
-        multiGate.on(2)
-        multiGate.on(3)
-        multiGate.on(4)
-        multiGate.on(5)
-        multiGate.on(6)
-        multiGate.on(7)
-        multiGate.on(8)
-        multiGate.on(9)
-        multiGate.off(1)
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.on()
+        multiGate.off()
 
         then:
         atomicInteger.get() == 0
@@ -107,13 +107,13 @@ class MultiGateSpec extends Specification {
     def "set repeatable on and off with double gate"() {
         given:
         AtomicInteger atomicInteger = new AtomicInteger(0)
-        MultiGate multiGate = MultiGate.of(2, {atomicInteger.addAndGet(1)}, MultiGate.EMPTY_ACTION)
+        ForceGate multiGate = ForceGate.of(2, {atomicInteger.addAndGet(1)}, MultiGate.EMPTY_ACTION, true)
 
         when:
-        multiGate.on(0)
-        multiGate.on(1)
-        multiGate.off(1)
-        multiGate.on(1)
+        multiGate.on()
+        multiGate.on()
+        multiGate.off()
+        multiGate.on()
 
         then:
         atomicInteger.get() == 2
@@ -122,13 +122,13 @@ class MultiGateSpec extends Specification {
     def "set nonRepeatable on and off with double gate"() {
         given:
         AtomicInteger atomicInteger = new AtomicInteger(0)
-        MultiGate multiGate = MultiGate.of(2, {atomicInteger.addAndGet(1)}, MultiGate.EMPTY_ACTION, false)
+        ForceGate multiGate = ForceGate.of(2, {atomicInteger.addAndGet(1)}, MultiGate.EMPTY_ACTION, false)
 
         when:
-        multiGate.on(0)
-        multiGate.on(1)
-        multiGate.off(1)
-        multiGate.on(1)
+        multiGate.on()
+        multiGate.on()
+        multiGate.off()
+        multiGate.on()
 
         then:
         atomicInteger.get() == 1

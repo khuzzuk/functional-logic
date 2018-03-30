@@ -3,6 +3,7 @@ package pl.khuzzuk.functions;
 import java.util.function.Consumer;
 
 public class MultiGate {
+    public static final Runnable EMPTY_ACTION = () -> {/*empty action*/};
     private GateElement[] elements;
     private Runnable on;
     private Runnable off;
@@ -12,7 +13,15 @@ public class MultiGate {
     private MultiGate() {
     }
 
+    public static MultiGate of(int switches, Runnable whenOn) {
+        return of(switches, whenOn, EMPTY_ACTION, true);
+    }
+
     public static MultiGate of(int switches, Runnable whenOn, Runnable whenOff) {
+        return of(switches, whenOn, whenOff, true);
+    }
+
+    public static MultiGate of(int switches, Runnable whenOn, Runnable whenOff, boolean repeatable) {
         if (switches < 2) throw new IllegalArgumentException();
         MultiGate multiGate = new MultiGate();
         multiGate.onAction = GateElement::get;
@@ -20,11 +29,11 @@ public class MultiGate {
         multiGate.on = whenOn;
         multiGate.off = whenOff;
         multiGate.elements = new GateElement[switches];
-        multiGate.setElements();
+        multiGate.setElements(repeatable);
         return multiGate;
     }
 
-    private void setElements() {
+    private void setElements(boolean repeatable) {
         GateElement firstGate = new GateElement();
         firstGate.action = offAction;
         elements[0] = firstGate;
@@ -35,7 +44,7 @@ public class MultiGate {
             elements[i - 1].next = gate;
             elements[i] = gate;
         }
-        LastGate lastGate = new LastGate();
+        LastGate lastGate = repeatable ? new RepeatableLastGate() : new LastGate();
         elements[size - 2].next = lastGate;
         elements[size - 1] = lastGate;
     }
@@ -76,7 +85,16 @@ public class MultiGate {
     }
 
     private class LastGate extends GateElement {
-        private Consumer<GateElement> lastOnAction = element -> on.run();
+        Consumer<GateElement> lastOnAction;
+
+        LastGate()
+        {
+            lastOnAction = element -> {
+                on.run();
+                on = EMPTY_ACTION;
+                off = EMPTY_ACTION;
+            };
+        }
 
         @Override
         void get() {
@@ -86,6 +104,13 @@ public class MultiGate {
         @Override
         void on() {
             this.action = lastOnAction;
+        }
+    }
+
+    private class RepeatableLastGate extends LastGate {
+        RepeatableLastGate()
+        {
+            lastOnAction = element -> on.run();
         }
     }
 }

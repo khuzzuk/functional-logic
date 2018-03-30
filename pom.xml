@@ -13,7 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>9</java.version>
         <compiler.version>3.5.1</compiler.version>
         <github.global.server>github</github.global.server>
         <maven-surefire-plugin>2.19.1</maven-surefire-plugin>
