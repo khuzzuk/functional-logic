@@ -6,14 +6,14 @@
 
     <groupId>pl.khuzzuk</groupId>
     <artifactId>functional-logic</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <name>Functional Logic</name>
     <description>Providex some logical tools for lowering cyclomatic complexity</description>
     <url>https://github.com/khuzzuk/functional-logic</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>9</java.version>
         <compiler.version>3.5.1</compiler.version>
         <github.global.server>github</github.global.server>
         <maven-surefire-plugin>2.19.1</maven-surefire-plugin>
